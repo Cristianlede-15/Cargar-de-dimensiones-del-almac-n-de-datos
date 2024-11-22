@@ -1,4 +1,4 @@
-﻿using LoadDimsDWH.Data.Context;
+using LoadDimsDWH.Data.Context;
 using LoadDimsDWH.Data.Interfaces;
 using LoadDimsDWH.Data.Models;
 using LoadDimsDWH.Data.Results;
@@ -25,11 +25,11 @@ namespace LoadDimsDWH.Data.Services
             OperactionResult result = new OperactionResult();
             try
             {
-                await LoadDimCustomer();
-                await LoadDimEmployee();
-                await LoadDimShippers();
-                await LoadDimCategories();
-                await LoadDimProduct();
+                await LoadCategory();
+                await LoadCustomer();
+                await LoadEmployee();
+                await LoadProduct();
+                await LoadShipper();
 
                 result.Success = true;
                 result.Message = "All dimensions loaded successfully.";
@@ -42,9 +42,40 @@ namespace LoadDimsDWH.Data.Services
             return result;
         }
 
-        private async Task<OperactionResult> LoadDimCustomer()
+        private async Task<OperactionResult> LoadCategory()
         {
-            OperactionResult result = new OperactionResult();
+            OperactionResult operation = new OperactionResult();
+            try
+            {
+                var categories = await _northwindContext.Categories.Select(cat => new DimCategories
+                {
+                    CategoryID = cat.CategoryId,
+                    CategoryName = cat.CategoryName,
+                    Description = cat.Description
+                }).AsNoTracking().ToListAsync();
+
+                int[] categoryIds = categories.Select(c => c.CategoryID).ToArray();
+
+                await _dbOrdersContext.DimCategories.Where(c => categoryIds.Contains(c.CategoryID))
+                                                    .AsNoTracking()
+                                                    .ExecuteDeleteAsync();
+
+                await _dbOrdersContext.DimCategories.AddRangeAsync(categories);
+                await _dbOrdersContext.SaveChangesAsync();
+
+                operation.Success = true;
+            }
+            catch (Exception ex)
+            {
+                operation.Success = false;
+                operation.Message = $"Error loading Categories dimension: {ex.Message}";
+            }
+            return operation;
+        }
+
+        private async Task<OperactionResult> LoadCustomer()
+        {
+            OperactionResult operation = new OperactionResult();
             try
             {
                 var customers = await _northwindContext.Customers.Select(cust => new DimCustomers
@@ -71,26 +102,31 @@ namespace LoadDimsDWH.Data.Services
                 await _dbOrdersContext.DimCustomers.AddRangeAsync(customers);
                 await _dbOrdersContext.SaveChangesAsync();
 
-                result.Success = true;
+                operation.Success = true;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error loading Customers dimension: {ex.Message}";
+                operation.Success = false;
+                operation.Message = $"Error loading Customers dimension: {ex.Message}";
             }
-            return result;
+            return operation;
         }
 
-        private async Task<OperactionResult> LoadDimEmployee()
+        private async Task<OperactionResult> LoadEmployee()
         {
-            OperactionResult result = new OperactionResult();
+            OperactionResult operation = new OperactionResult();
             try
             {
                 var employees = await _northwindContext.Employees.Select(emp => new DimEmployees
                 {
                     EmployeeID = emp.EmployeeId,
                     LastName = emp.LastName,
-                    FirstName = emp.FirstName
+                    FirstName = emp.FirstName,
+                    Title = emp.Title,
+                    TitleOfCourtesy = emp.TitleOfCourtesy,
+                    BirthDate = emp.BirthDate,
+                    HireDate = emp.HireDate,
+                    Address = emp.Address
                 }).AsNoTracking().ToListAsync();
 
                 int[] employeeIds = employees.Select(e => e.EmployeeID).ToArray();
@@ -102,19 +138,52 @@ namespace LoadDimsDWH.Data.Services
                 await _dbOrdersContext.DimEmployees.AddRangeAsync(employees);
                 await _dbOrdersContext.SaveChangesAsync();
 
-                result.Success = true;
+                operation.Success = true;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error loading Employee dimension: {ex.Message}";
+                operation.Success = false;
+                operation.Message = $"Error loading Employee dimension: {ex.Message}";
             }
-            return result;
+            return operation;
         }
 
-        private async Task<OperactionResult> LoadDimShippers()
+        private async Task<OperactionResult> LoadProduct()
         {
-            OperactionResult result = new OperactionResult();
+            OperactionResult operation = new OperactionResult();
+            try
+            {
+                var products = await _northwindContext.Products.Select(prod => new DimProducts
+                {
+                    ProductID = prod.ProductId,
+                    ProductName = prod.ProductName,
+                    SupplierID = (int)prod.SupplierId,
+                    CategoryID = (int)prod.CategoryId,
+                    QuantityPerUnit = prod.QuantityPerUnit
+                }).AsNoTracking().ToListAsync();
+
+                int[] productIds = products.Select(p => p.ProductID).ToArray();
+
+                await _dbOrdersContext.DimProducts.Where(p => productIds.Contains(p.ProductID))
+                                                  .AsNoTracking()
+                                                  .ExecuteDeleteAsync();
+
+                await _dbOrdersContext.DimProducts.AddRangeAsync(products);
+                await _dbOrdersContext.SaveChangesAsync();
+
+                operation.Success = true;
+            }
+            catch (Exception ex)
+            {
+                operation.Success = false;
+                operation.Message = $"Error loading Products dimension: {ex.Message}";
+            }
+            return operation;
+        }
+
+        private async Task<OperactionResult> LoadShipper()
+        {
+            OperactionResult operation = new OperactionResult();
             try
             {
                 var shippers = await _northwindContext.Shippers.Select(ship => new DimShippers
@@ -133,77 +202,15 @@ namespace LoadDimsDWH.Data.Services
                 await _dbOrdersContext.DimShippers.AddRangeAsync(shippers);
                 await _dbOrdersContext.SaveChangesAsync();
 
-                result.Success = true;
+                operation.Success = true;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error loading Shippers dimension: {ex.Message}";
+                operation.Success = false;
+                operation.Message = $"Error loading Shippers dimension: {ex.Message}";
             }
-            return result;
-        }
-
-        private async Task<OperactionResult> LoadDimCategories()
-        {
-            OperactionResult result = new OperactionResult();
-            try
-            {
-                var categories = await _northwindContext.Categories.Select(cat => new DimCategories
-                {
-                    CategoryID = cat.CategoryId,
-                    CategoryName = cat.CategoryName,
-                    Description = cat.Description,
-                }).AsNoTracking().ToListAsync();
-
-                int[] categoryIds = categories.Select(c => c.CategoryID).ToArray();
-
-                await _dbOrdersContext.DimCategories.Where(c => categoryIds.Contains(c.CategoryID))
-                                                    .AsNoTracking()
-                                                    .ExecuteDeleteAsync();
-
-                await _dbOrdersContext.DimCategories.AddRangeAsync(categories);
-                await _dbOrdersContext.SaveChangesAsync();
-
-                result.Success = true;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = $"Error loading Categories dimension: {ex.Message}";
-            }
-            return result;
-        }
-
-        private async Task<OperactionResult> LoadDimProduct()
-        {
-            OperactionResult result = new OperactionResult();
-            try
-            {
-                var products = await _northwindContext.Products.Select(prod => new DimProducts
-                {
-                    ProductID = prod.ProductId,
-                    ProductName = prod.ProductName,
-                    SupplierID = (int)prod.SupplierId,
-                    CategoryID = (int)prod.CategoryId
-                }).AsNoTracking().ToListAsync();
-
-                int[] productIds = products.Select(p => p.ProductID).ToArray();
-
-                await _dbOrdersContext.DimProducts.Where(p => productIds.Contains(p.ProductID))
-                                                  .AsNoTracking()
-                                                  .ExecuteDeleteAsync();
-
-                await _dbOrdersContext.DimProducts.AddRangeAsync(products);
-                await _dbOrdersContext.SaveChangesAsync();
-
-                result.Success = true;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = $"Error loading Products dimension: {ex.Message}";
-            }
-            return result;
+            return operation;
         }
     }
 }
+
