@@ -1,0 +1,15 @@
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\bin\Debug\net8.0\LoadDimsDWH.Data.deps.json
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\bin\Debug\net8.0\LoadDimsDWH.Data.dll
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\bin\Debug\net8.0\LoadDimsDWH.Data.pdb
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\obj\Debug\net8.0\LoadDimsDWH.Data.csproj.AssemblyReference.cache
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\obj\Debug\net8.0\LoadDimsDWH.Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\obj\Debug\net8.0\LoadDimsDWH.Data.AssemblyInfoInputs.cache
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\obj\Debug\net8.0\LoadDimsDWH.Data.AssemblyInfo.cs
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\obj\Debug\net8.0\LoadDimsDWH.Data.csproj.CoreCompileInputs.cache
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\obj\Debug\net8.0\LoadDimsDWH.Data.sourcelink.json
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\obj\Debug\net8.0\LoadDimsDWH.Data.dll
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\obj\Debug\net8.0\refint\LoadDimsDWH.Data.dll
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\obj\Debug\net8.0\LoadDimsDWH.Data.pdb
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\obj\Debug\net8.0\ref\LoadDimsDWH.Data.dll
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\bin\Debug\net8.0\LoadDimsDWH.Data.runtimeconfig.json
+C:\Users\pc\source\repos\LoadDimsDWH\LoadDimsDWH.Data\obj\Debug\net8.0\LoadDimsDWH.Data.genruntimeconfig.cache
